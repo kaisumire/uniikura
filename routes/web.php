@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PurchaseController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,5 @@ Route::put('/products/{product}', 'App\Http\Controllers\ProductController@update
 Route::get('/products/show/{product}', 'App\Http\Controllers\ProductController@show')->name('product.show');
 
 Route::delete('/products/{product}', 'App\Http\Controllers\ProductController@destroy')->name('product.destroy');
+
+Route::get('/products/search', 'App\Http\Controllers\ProductController@search')->name('products.search');
