@@ -184,11 +184,34 @@ class ProductController extends Controller
     public function search(Request $request)
     {
         $keyword = $request->input('keyword');
-        $products = Product::where('name', 'LIKE', "%$keyword%")->paginate(5);
+        
+        $products = Product::select([
+            'products.id',
+            'products.img_path',
+            'products.name',
+            'products.kakaku',
+            'products.zaiko',
+            'makers.str as maker'
+        ])
+        ->join('makers', 'products.maker', '=', 'makers.id')
+        ->when($keyword, function ($query, $keyword) {
+            return $query->where('products.name', 'like', '%' . $keyword . '%');
+        })
 
-        $view = view('partials.product-list', compact('products'))->render();
+        ->get();
 
-        return response()->json(['html' => $view]);
+        $formatted = $products->map(function ($product) {
+            return [
+                'id' => $product->id,
+                'img_path' => $product->img_path,
+                'name' => $product->name,
+                'kakaku' => $product->kakaku,
+                'zaiko' => $product->zaiko,
+                'maker' => $product->maker,
+        ];
+    });
+
+    return response()->json(['products' => $formatted]);
 
     }
 }
